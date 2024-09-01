@@ -31,5 +31,5 @@
 ## Installation
 
 1. **Drag and Drop:** Simply drag and drop the provided scripts into your FiveM resources folder.
-2. **Setup Configuration:** Edit the `Config` and `Businesses` files to set up your restaurants, warehouses, and business details.
+2. **Setup Configuration:** Edit the `Configs` files to set up your restaurants, warehouses, and business details.
 3. **Ensure in `cfg`:** Make sure to add the resource to your `server.cfg` file to ensure it loads on startup.
