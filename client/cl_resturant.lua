@@ -448,7 +448,7 @@ AddEventHandler('v-businesses:ShowMenu', function(info)
 
     local imageUrl = business.menu
 
-    print("Image URL: " .. imageUrl)
+    --print("Image URL: " .. imageUrl)
 
     local alert = lib.alertDialog({
         header = business.jobDisplay .. ' Menu' or "Business Image",
@@ -461,8 +461,6 @@ AddEventHandler('v-businesses:ShowMenu', function(info)
             confirm = 'OK'
         }
     })
-
-    print(alert)
 end)
 
 -- Seller - auto goes to warehouse stock

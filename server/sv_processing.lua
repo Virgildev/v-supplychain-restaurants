@@ -4,16 +4,10 @@ local QBCore = exports['qb-core']:GetCoreObject()
 RegisterNetEvent('restaurant:orderIngredients')
 AddEventHandler('restaurant:orderIngredients', function(ingredient, quantity, restaurantId)
     local playerId = source
-    print("Server received event: restaurant:orderIngredients")
-    print("Player ID:", playerId)
-    print("Ingredient:", ingredient)
-    print("Quantity:", quantity)
-    print("Restaurant ID:", restaurantId)
 
     -- Ensure quantity is a number and playerId is valid
     quantity = tonumber(quantity)
     if not quantity or quantity <= 0 then
-        print("Error: Quantity is not a valid number")
         TriggerClientEvent('ox_lib:notify', playerId, {
             title = 'Order Error',
             description = 'The quantity provided is not valid. Please check and try again.',
@@ -27,7 +21,6 @@ AddEventHandler('restaurant:orderIngredients', function(ingredient, quantity, re
     -- Fetch restaurant-specific items based on the restaurantId
     local restaurantJob = Config.Restaurants[restaurantId] and Config.Restaurants[restaurantId].job
     if not restaurantJob then
-        print("Error: Restaurant ID not found")
         TriggerClientEvent('ox_lib:notify', playerId, {
             title = 'Order Error',
             description = 'The restaurant ID is not valid. Please check and try again.',
@@ -72,7 +65,6 @@ AddEventHandler('restaurant:orderIngredients', function(ingredient, quantity, re
                         -- Also trigger showing order details on the client side
                         TriggerClientEvent('restaurant:showOrderDetails', playerId, item.name, quantity, totalCost)
                     else
-                        print("Error: Failed to insert order into database.")
                         TriggerClientEvent('ox_lib:notify', playerId, {
                             title = 'Order Error',
                             description = 'An error occurred while processing your order. Please try again.',
@@ -92,7 +84,6 @@ AddEventHandler('restaurant:orderIngredients', function(ingredient, quantity, re
                 })
             end
         else
-            print("Error: Could not fetch player object.")
             TriggerClientEvent('ox_lib:notify', playerId, {
                 title = 'Order Error',
                 description = 'An error occurred while processing your order. Please try again.',
@@ -102,7 +93,6 @@ AddEventHandler('restaurant:orderIngredients', function(ingredient, quantity, re
             })
         end
     else
-        print("Error: Item not found for ingredient:", ingredient)
         TriggerClientEvent('ox_lib:notify', playerId, {
             title = 'Order Error',
             description = 'The ingredient you provided is not found. Please check and try again.',
@@ -119,12 +109,7 @@ AddEventHandler('update:stock', function(restaurantId)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(src)
 
-    -- Debug print
-    print("Received restaurantId:", restaurantId)
-
-    -- Validate restaurantId
     if not restaurantId then
-        print("Error: restaurantId is null or invalid.")
         TriggerClientEvent('ox_lib:notify', source, {
             title = 'Error',
             description = 'Invalid restaurant ID for stock update.',
@@ -136,14 +121,9 @@ AddEventHandler('update:stock', function(restaurantId)
         return
     end
 
-    -- Fetch all pending orders for the restaurant
     MySQL.Async.fetchAll('SELECT * FROM orders WHERE restaurant_id = @restaurant_id AND status IN ("pending", "accepted")', {
         ['@restaurant_id'] = restaurantId
     }, function(orders)
-        -- Debug print for fetched orders
-        print("Fetched orders:", json.encode(orders))
-
-        -- Initialize transaction queries
         local queries = {}
         local totalCost = 0
 
@@ -153,10 +133,7 @@ AddEventHandler('update:stock', function(restaurantId)
             local quantity = tonumber(order.quantity)
             local orderCost = order.total_cost or 0
 
-            print("Processing order:", json.encode(order))  -- Debug print for each order
-
             if ingredient and quantity then
-                -- Prepare queries to mark order as complete and update stock
                 table.insert(queries, string.format(
                     'UPDATE orders SET status = "completed" WHERE id = %d',
                     orderId
@@ -172,7 +149,6 @@ AddEventHandler('update:stock', function(restaurantId)
 
                 totalCost = totalCost + orderCost
 
-                print("Prepared SQL for order ID:", orderId)  -- Debug print for prepared SQL queries
             else
                 print("Error: Invalid order data. Ingredient or quantity is nil.")
             end
@@ -181,7 +157,6 @@ AddEventHandler('update:stock', function(restaurantId)
         -- Execute transaction
         MySQL.Async.transaction(queries, function(success)
             if success then
-                print("Transaction successful. Orders marked as complete and stock updated.")  -- Debug print for transaction success
                 TriggerClientEvent('ox_lib:notify', src, {
                     title = 'Stock Updated',
                     description = 'Orders marked as complete and stock updated successfully!',
@@ -195,7 +170,6 @@ AddEventHandler('update:stock', function(restaurantId)
                 local driverPayment = totalCost * Config.DriverPayPrec
                 TriggerEvent('pay:driver', src, driverPayment)
             else
-                print("Transaction failed. Unable to update stock or mark orders as complete.")  -- Debug print for transaction failure
                 TriggerClientEvent('ox_lib:notify', src, {
                     title = 'Error',
                     description = 'Failed to update stock or mark orders as complete.',
@@ -209,17 +183,14 @@ AddEventHandler('update:stock', function(restaurantId)
     end)
 end)
 
--- Pay the driver
 RegisterNetEvent('pay:driver')
 AddEventHandler('pay:driver', function(driverId, amount)
     local src = source
     local xPlayer = QBCore.Functions.GetPlayer(driverId)
 
     if xPlayer then
-        -- Add the amount to the player's account
         xPlayer.Functions.AddMoney('bank', amount, "Payment for delivery")
 
-        -- Notify the player about the payment using ox_lib:notify
         TriggerClientEvent('ox_lib:notify', driverId, {
             title = 'Payment Received',
             description = 'You have been paid $' .. amount .. ' for the delivery.',
@@ -229,8 +200,6 @@ AddEventHandler('pay:driver', function(driverId, amount)
             duration = 10000
         })
     else
-        print("Error: Player not found.")
-        -- Notify the player about the error using ox_lib:notify
         TriggerClientEvent('ox_lib:notify', src, {
             title = 'Error',
             description = 'Unable to find the player to process payment.',
@@ -245,8 +214,6 @@ end)
 RegisterNetEvent('warehouse:getPendingOrders')
 AddEventHandler('warehouse:getPendingOrders', function()
     local playerId = source
-    print("Server received event: warehouse:getPendingOrders")
-    print("Player ID:", playerId)
 
     MySQL.Async.fetchAll('SELECT * FROM orders WHERE status = @status', {
         ['@status'] = 'pending',
@@ -257,21 +224,15 @@ AddEventHandler('warehouse:getPendingOrders', function()
         end
 
         local orders = {}
-        print("Raw pending orders:", json.encode(results)) -- Debug print of raw results
 
         for _, order in ipairs(results) do
             -- Get the restaurant job from Config.Restaurants
             local restaurantData = Config.Restaurants[order.restaurant_id]
             local restaurantJob = restaurantData and restaurantData.job
 
-            -- Print debug information
-            print("Restaurant ID:", order.restaurant_id, "Job:", restaurantJob)
-            print("Ingredient:", order.ingredient:lower())
-
             -- Print the item list for the current restaurant job
             if Config.Items[restaurantJob] then
-                print("Config.Items[", restaurantJob, "] exists.")
-                print("Available items:", json.encode(Config.Items[restaurantJob])) -- Print available items
+
             else
                 print("Error: Config.Items[", restaurantJob, "] does not exist.")
             end
@@ -338,7 +299,6 @@ AddEventHandler('warehouse:getStocks', function()
         for _, item in ipairs(results) do
             stock[item.ingredient] = item.quantity
         end
-        -- Pass the cleaned stock table to the client
         TriggerClientEvent('restaurant:showStockDetails', playerId, stock, restaurantId)
     end)
 end)
@@ -350,22 +310,16 @@ AddEventHandler('restaurant:withdrawStock', function(restaurantId, ingredient, a
     local player = QBCore.Functions.GetPlayer(src)
     
     if player then
-        -- Debug: Print received ingredient and available keys in Config.Items
-        print("Received ingredient:", ingredient)
-        print("Available items in Config.Items:")
         for job, items in pairs(Config.Items) do
             for item, data in pairs(items) do
                 print("Job: " .. job .. ", Item: " .. item .. ", Item Name: " .. data.name)
             end
         end
-        
-        -- Trim whitespace from ingredient using the custom trim function
+
         ingredient = trim(ingredient)
-        
-        -- Fetch the job for the given restaurantId
+
         local restaurantJob = Config.Restaurants[restaurantId].job
-        
-        -- Get the item data based on restaurant job and ingredient
+
         local itemData = Config.Items[restaurantJob] and Config.Items[restaurantJob][ingredient]
         
         if itemData then
@@ -397,7 +351,6 @@ AddEventHandler('restaurant:withdrawStock', function(restaurantId, ingredient, a
                     end
                 end)
             else
-                print("Error: Invalid amount provided:", amount)
                 TriggerClientEvent('ox_lib:notify', src, {
                     title = 'Error',
                     description = 'Invalid amount for stock withdrawal.',
@@ -407,7 +360,6 @@ AddEventHandler('restaurant:withdrawStock', function(restaurantId, ingredient, a
                 })
             end
         else
-            print("Error: Item data not found for ingredient:", ingredient)
             TriggerClientEvent('ox_lib:notify', src, {
                 title = 'Error',
                 description = 'Item data not found for ingredient: ' .. ingredient,
@@ -417,7 +369,6 @@ AddEventHandler('restaurant:withdrawStock', function(restaurantId, ingredient, a
             })
         end
     else
-        print("Error: Player not found")
         TriggerClientEvent('ox_lib:notify', src, {
             title = 'Error',
             description = 'Player not found.',
@@ -428,7 +379,6 @@ AddEventHandler('restaurant:withdrawStock', function(restaurantId, ingredient, a
     end
 end)
 
--- Function to trim whitespace from the beginning and end of a string
 function trim(s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
@@ -436,10 +386,7 @@ end
 RegisterNetEvent('warehouse:acceptOrder')
 AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
     local workerId = source
-    print("Accepted Order ID:", orderId)
-    print("Restaurant ID:", restaurantId)
 
-    -- Fetch the order from the database
     MySQL.Async.fetchAll('SELECT * FROM orders WHERE id = @id', {
         ['@id'] = orderId,
     }, function(orderResults)
@@ -449,11 +396,9 @@ AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
         end
 
         local order = orderResults[1]
-        
-        -- Fetch the job for the given restaurantId
+
         local restaurantJob = Config.Restaurants[restaurantId] and Config.Restaurants[restaurantId].job
-        
-        -- Get the item data based on restaurant job and ingredient
+
         local itemData = Config.Items[restaurantJob] and Config.Items[restaurantJob][order.ingredient:lower()]
 
         if not itemData then
@@ -461,7 +406,6 @@ AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
             return
         end
 
-        -- Check warehouse stock
         MySQL.Async.fetchAll('SELECT quantity FROM warehouse_stock WHERE ingredient = @ingredient', {
             ['@ingredient'] = order.ingredient:lower(),
         }, function(stockResults)
@@ -473,8 +417,6 @@ AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
             local stock = stockResults[1].quantity
 
             if stock < order.quantity then
-                print("Error: Insufficient stock for item:", order.ingredient)
-                -- Notify the client about insufficient stock
                 TriggerClientEvent('ox_lib:notify', workerId, {
                     title = 'Insufficient Stock',
                     description = 'Not enough stock for ' .. order.ingredient .. '.',
@@ -504,14 +446,12 @@ AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
                 ['@quantity'] = order.quantity,
                 ['@ingredient'] = order.ingredient:lower(),
             }, function(rowsChanged)
-                print("Updated warehouse stock for item:", order.ingredient, "Rows changed:", rowsChanged)
 
                 -- Update the order status to 'accepted'
                 MySQL.Async.execute('UPDATE orders SET status = @status WHERE id = @id', {
                     ['@status'] = 'accepted',
                     ['@id'] = orderId,
                 }, function(statusUpdateResult)
-                    print("Order status updated to 'accepted' for order ID:", orderId)
 
                     -- Notify the client about successful stock update and order acceptance
                     TriggerClientEvent('ox_lib:notify', workerId, {
@@ -544,14 +484,12 @@ end)
 AddEventHandler('onResourceStart', function(resourceName)
     -- Ensure this code runs only when the relevant resource starts
     if resourceName == GetCurrentResourceName() then
-        print("Resource started: " .. resourceName)
 
         -- Update orders with 'accepted' status to 'pending'
         MySQL.Async.execute('UPDATE orders SET status = @newStatus WHERE status = @oldStatus', {
             ['@newStatus'] = 'pending',
             ['@oldStatus'] = 'accepted'
         }, function(affectedRows)
-            print("Updated orders from 'accepted' to 'pending'. Affected rows:", affectedRows)
         end)
     end
 end)
@@ -570,18 +508,15 @@ AddEventHandler('farming:sellFruit', function(fruit, amount, targetCoords)
             Player.Functions.RemoveItem(fruit, amount)
             Player.Functions.AddMoney('cash', total)
 
-            -- Update warehouse stock
             MySQL.Async.fetchAll('SELECT * FROM warehouse_stock WHERE ingredient = @ingredient', {
                 ['@ingredient'] = fruit
             }, function(stockResults)
                 if #stockResults > 0 then
-                    -- Item exists, update the quantity
                     MySQL.Async.execute('UPDATE warehouse_stock SET quantity = quantity + @quantity WHERE ingredient = @ingredient', {
                         ['@quantity'] = amount,
                         ['@ingredient'] = fruit
                     })
                 else
-                    -- Item does not exist, insert new entry
                     MySQL.Async.execute('INSERT INTO warehouse_stock (ingredient, quantity) VALUES (@ingredient, @quantity)', {
                         ['@ingredient'] = fruit,
                         ['@quantity'] = amount

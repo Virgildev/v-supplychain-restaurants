@@ -47,7 +47,7 @@ AddEventHandler('restaurant:openOrderMenu', function(data)
     local restaurantId = data.restaurantId or nil
 
     if type(restaurantId) ~= 'number' and type(restaurantId) ~= 'string' then
-        print("Error: restaurantId is not a number or string.")
+        --print("Error: restaurantId is not a number or string.")
         return
     end
 
@@ -116,7 +116,7 @@ AddEventHandler('restaurant:openOrderMenu', function(data)
 
                     if input and input[1] and tonumber(input[1]) > 0 then
                         local quantity = tonumber(input[1])
-                        print("Sending order to server:", ingredient, quantity, restaurantId)
+                        --print("Sending order to server:", ingredient, quantity, restaurantId)
                         TriggerServerEvent('restaurant:orderIngredients', ingredient, quantity, restaurantId)
                     else
                         lib.notify({
@@ -237,7 +237,7 @@ end)
 -- Open Processing Menu
 RegisterNetEvent('warehouse:openProcessingMenu')
 AddEventHandler('warehouse:openProcessingMenu', function()
-    print("Opening main menu")
+   -- print("Opening main menu")
 
     local options = {
         {
@@ -265,10 +265,10 @@ end)
 
 RegisterNetEvent('warehouse:showOrderDetails')
 AddEventHandler('warehouse:showOrderDetails', function(orders)
-    print("Orders received:", json.encode(orders))  -- Debug print
+    --print("Orders received:", json.encode(orders))  -- Debug print
 
     if not orders or #orders == 0 then
-        print("No active orders found.")  -- Debug print
+        --print("No active orders found.")  -- Debug print
         lib.notify({
             title = 'No Orders',
             description = 'There are no active orders at the moment.',
@@ -304,7 +304,7 @@ end)
 
 -- Function to open action menu for a selected order
 function openOrderActionMenu(order, restaurantId)
-    print(string.format("Opening action menu for Order ID: %d, Restaurant ID: %d", order.id, restaurantId))  -- Debug print
+    --print(string.format("Opening action menu for Order ID: %d, Restaurant ID: %d", order.id, restaurantId))  -- Debug print
     lib.registerContext({
         id = 'order_action_menu',
         title = 'Order Actions',
@@ -331,10 +331,10 @@ end
 -- Display Stock Details
 RegisterNetEvent('restaurant:showStockDetails')
 AddEventHandler('restaurant:showStockDetails', function(stock, restaurantId)
-    print("Stock details received:", json.encode(stock))  -- Debug print
+    --print("Stock details received:", json.encode(stock))  -- Debug print
 
     if not stock or next(stock) == nil then
-        print("No stock available.")  -- Debug print
+        --print("No stock available.")  -- Debug print
         lib.notify({
             title = 'No Stock',
             description = 'There is no stock available in the warehouse.',
@@ -567,7 +567,7 @@ end)
 RegisterNetEvent('warehouse:loadingWithForklift')
 AddEventHandler('warehouse:loadingWithForklift', function(trailerConfig, deliveryMarkerConfig, truck, restaurantId, orders, trailer)
 
-    print('Trailer:'.. trailer)
+    --print('Trailer:'.. trailer)
     lib.alertDialog({
         header = 'Nice Job!',
         content = 'Now that the truck is ready to be loaded \n Start picking up the pallets around you and bring them towards the trailer \n Good Luck!',
@@ -797,8 +797,8 @@ AddEventHandler('warehouse:startDelivery', function(restaurantId, truck, orders,
         cancel = true
     })
     
-    print("Received orders:", json.encode(orders))
-    print(restaurantId)
+    --print("Received orders:", json.encode(orders))
+    --print(restaurantId)
     
     local deliveryPosition = Config.Restaurants[restaurantId].delivery
 
@@ -1101,7 +1101,7 @@ AddEventHandler('warehouse:returnTruck', function(truck, restaurantId, orders)
         centered = true,
         cancel = true
     })
-    print("Received orders:", json.encode(orders))
+    --print("Received orders:", json.encode(orders))
     local playerPed = PlayerPedId()
     local truckReturnPosition = vector3(Config.Warehouses[1].truck.position.x, Config.Warehouses[1].truck.position.y, Config.Warehouses[1].truck.position.z)
 
