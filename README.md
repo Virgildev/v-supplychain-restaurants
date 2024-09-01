@@ -33,6 +33,7 @@
 **Support:**
 For any issues or support, feel free to open an issue on my [GitHub repository](https://github.com/Virgildev/v-supplychain-restaurants), below this post or contact me via discord Virgil7399
 
+|                                         |                                |
 |-------------------------------------|----------------------------|
 | Code is accessible       | Yes                       |
 | Lines (approximately)  | ~2400                  |
