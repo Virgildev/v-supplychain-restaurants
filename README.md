@@ -30,6 +30,11 @@
 2. **Configuration:** Edit the `Config` and `Businesses` files to customize your restaurants, warehouses, and business settings.
 3. **Server Configuration:** Add the resource to your `server.cfg` file to ensure it loads properly.
 
+**Script Requirements:**
+1. ox_target/qb-target
+2. ox_inventory
+3. ox_lib
+
 **Support:**
 For any issues or support, feel free to open an issue on my [GitHub repository](https://github.com/Virgildev/v-supplychain-restaurants), below this post or contact me via discord Virgil7399
 
