@@ -7,7 +7,7 @@
 
 ## Download
 
-- You can download the scripts from the GitHub repository: [on GitHub](https://github.com/Virgildev/v-supplychain-resturants)
+- You can download the scripts from the GitHub repository: [on GitHub](https://github.com/Virgildev/v-supplychain-restaurants)
 
 ## Overview
 
