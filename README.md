@@ -2,7 +2,8 @@
 
 ## Preview
 
-See the scripts in action by checking out the preview link: [Restaurant and Business Script Preview](https://example.com/preview)
+See the scripts in action by checking out the preview link: [Restaurant and Business Script Preview](https://drive.google.com/file/d/1Oxk_uKFl5PBw1qSVACX0j4R0oOh9hPhi/view?usp=sharing)
+MLO USED IN PREVIEW: https://forum.cfx.re/t/release-free-mlo-trucks-job-warehouse/2347310
 
 ## Download
 
