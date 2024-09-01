@@ -18,9 +18,6 @@ This repository contains two scripts designed for enhancing restaurant and busin
 
 - **Warehouse Configuration:** Set up warehouses with forklifts, pallets, delivery markers, trucks, and trailers.
 - **Box Carrying:** Customize the prop used for carrying boxes during deliveries.
-
-### Restaurant Script
-
 - **Restaurant Configuration:** Manage multiple restaurants with settings for name, job, positions, delivery points, and more.
 - **Items Management:** Define items available for order at each restaurant, including prices.
 - **Driver Pay:** Configure driver payment as a percentage of the order.
@@ -28,7 +25,7 @@ This repository contains two scripts designed for enhancing restaurant and busin
 ### Business Script
 
 - **Billing Events:** Integration with billing systems for creating and viewing invoices.
-- **Business Details:** Define business settings such as name, menu URL, clock-in locations, registers, trays, storage, cooking locations, and chairs.
+- **Business Details:** Define UNLIMITED business settings such as name, menu URL, clock-in locations, registers, trays, storage, cooking locations, and chairs.
 
 ## Installation
 
