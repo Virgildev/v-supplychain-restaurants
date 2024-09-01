@@ -1,5 +1,3 @@
-![OUtBw12|690x388](upload://lAFgpfqkRMT6iojcnn6FE2X8L6Q.jpeg)
-
 **Preview:**
 - Check out the scripts in action with my [preview link](https://drive.google.com/file/d/1Oxk_uKFl5PBw1qSVACX0j4R0oOh9hPhi/view?usp=sharing).
 - MLO USED IN PREVIEW: https://forum.cfx.re/t/release-free-mlo-trucks-job-warehouse/2347310
