@@ -555,3 +555,82 @@ AddEventHandler('onResourceStart', function(resourceName)
         end)
     end
 end)
+
+RegisterServerEvent('farming:sellFruit')
+AddEventHandler('farming:sellFruit', function(fruit, amount, targetCoords)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local item = Player.Functions.GetItemByName(fruit)
+
+    if item then
+        if item.amount >= amount then
+            local price = Config.ItemsFarming[fruit].price
+            local total = amount * price
+
+            Player.Functions.RemoveItem(fruit, amount)
+            Player.Functions.AddMoney('cash', total)
+
+            -- Update warehouse stock
+            MySQL.Async.fetchAll('SELECT * FROM warehouse_stock WHERE ingredient = @ingredient', {
+                ['@ingredient'] = fruit
+            }, function(stockResults)
+                if #stockResults > 0 then
+                    -- Item exists, update the quantity
+                    MySQL.Async.execute('UPDATE warehouse_stock SET quantity = quantity + @quantity WHERE ingredient = @ingredient', {
+                        ['@quantity'] = amount,
+                        ['@ingredient'] = fruit
+                    })
+                else
+                    -- Item does not exist, insert new entry
+                    MySQL.Async.execute('INSERT INTO warehouse_stock (ingredient, quantity) VALUES (@ingredient, @quantity)', {
+                        ['@ingredient'] = fruit,
+                        ['@quantity'] = amount
+                    })
+                end
+            end)
+
+            local sellMsg = 'Sold ' .. amount .. ' ' .. fruit .. ' for $' .. total
+
+            if Config.Notify == 'qb' then
+                TriggerClientEvent('QBCore:Notify', src, sellMsg, 'success')
+            else
+                local data = {
+                    title = 'Sold ' .. amount .. ' ' .. fruit,
+                    description = 'for $' .. total,
+                    type = 'success',
+                    duration = 9000,
+                    position = 'top-right'
+                }
+                TriggerClientEvent('ox_lib:notify', src, data)
+            end
+        else
+            local errMsg = 'You don\'t have enough ' .. fruit .. 's'
+
+            if Config.Notify == 'qb' then
+                TriggerClientEvent('QBCore:Notify', src, errMsg, 'error')
+            else
+                local data = {
+                    title = errMsg,
+                    type = 'error',
+                    duration = 3000,
+                    position = 'top-right'
+                }
+                TriggerClientEvent('ox_lib:notify', src, data)
+            end
+        end
+    else
+        local errMsg = 'You don\'t have any ' .. fruit .. 's'
+
+        if Config.Notify == 'qb' then
+            TriggerClientEvent('QBCore:Notify', src, errMsg, 'error')
+        else
+            local data = {
+                title = errMsg,
+                type = 'error',
+                duration = 3000,
+                position = 'top-right'
+            }
+            TriggerClientEvent('ox_lib:notify', src, data)
+        end
+    end
+end)

@@ -113,3 +113,74 @@ Config.Items = {
 Config.DriverPayPrec = 0.1 --precent of the order the driver gets, if you want to redo the way pricing is done go to server/sv_processing about line 220
 
 Config.CarryBoxProp = 'prop_box_03b' -- prop the player carries when carrying boxes inside the resturant for delivery
+
+
+--[[ 
+███████╗███████╗██╗     ██╗     ███████╗██████╗ 
+██╔════╝██╔════╝██║     ██║     ██╔════╝██╔══██╗
+███████╗█████╗  ██║     ██║     █████╗  ██████╔╝
+╚════██║██╔══╝  ██║     ██║     ██╔══╝  ██╔══██╗
+███████║███████╗███████╗███████╗███████╗██║  ██║
+╚══════╝╚══════╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
+]]
+
+-- ANY ITEMS SOLD TO THIS PERSON AUTO GO TO THE WAREHOUSE'S STOCK!!!!!!!!!!!!!!!!!!!!!!
+
+-- DONT MIND THESE THREE, DO NOT TOUCH
+Config.Progress = 'ox'
+Config.Notify = 'ox' 
+Config.Menu = 'ox' 
+
+-- Define the ped model
+Config.PedModel = "a_m_m_farmer_01"
+
+-- Define the ped and target location
+Config.Location = {
+    coords = vector3(2564.3635, 4680.3677, 33.0768),
+    heading = 46.2758
+}
+
+-- Blip for the purchaser
+Config.SellerBlip = {
+    label = 'Fruit Buyer',
+    coords = vector3(2564.3635, 4680.3677, 33.0768),
+    blipSprite = 1,
+    blipColor = 1,
+    blipScale = 0.8,
+}
+
+-- Animation while selling to the ped
+Config.SellingAnimDict = 'missheistdockssetup1ig_12@idle_b'
+Config.SellingAnimName = 'talk_gantry_idle_b_worker1'
+
+-- Progress time for selling
+Config.SellProgress = 10000
+
+-- Purchaser and their prices
+Config.ItemsFarming = {
+    ['lime'] = {label = 'Lime', price = 4},
+    ['orange'] = {label = 'Orange', price = 4},
+    ['coconut'] = {label = 'Coconut', price = 4},
+    ['pineapple'] = {label = 'Pineapple', price = 4},
+    ['broccoli'] = {label = 'Broccoli', price = 4},
+    ['cabbage'] = {label = 'Cabbage', price = 4},
+    ['carrots'] = {label = 'Carrots', price = 4},
+    ['lettuce'] = {label = 'Lettuce', price = 4},
+    ['spinach'] = {label = 'Spinach', price = 4},
+    ['milk'] = {label = 'Milk', price = 4},
+    ['egg'] = {label = 'Eggs', price = 4},
+    ['onion'] = {label = 'Onion', price = 4},
+    ['mushroom'] = {label = 'Mushroom', price = 4},
+    ['potato'] = {label = 'Potato', price = 4},
+    ['tomato'] = {label = 'Tomato', price = 4},
+    ['raspberries'] = {label = 'Raspberries', price = 4},
+    ['cherry'] = {label = 'Cherry', price = 4},
+    ['corn'] = {label = 'Corn', price = 4},
+    ['peach'] = {label = 'Peach', price = 4},
+    ['banana'] = {label = 'Banana', price = 4},
+    ['strawberry'] = {label = 'Strawberry', price = 4},
+    ['mint'] = {label = 'Mint', price = 4},
+    ['lemon'] = {label = 'Lemon', price = 4},
+    ['mango'] = {label = 'Mango', price = 4},
+    ['watermelon'] = {label = 'Watermelon', price = 4},
+}
