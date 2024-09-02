@@ -3,25 +3,45 @@ local QBCore = exports['qb-core']:GetCoreObject()
 -- Opening Menu for Ordering Ingredients for Multiple Restaurants
 Citizen.CreateThread(function()
     for id, restaurant in pairs(Config.Restaurants) do
-        exports['qb-target']:AddBoxZone("restaurant_computer_" .. id, restaurant.position, 1.5, 1.5, {
-            name = "restaurant_computer_" .. id,
-            heading = restaurant.heading,
-            debugPoly = false,
-            minZ = restaurant.position.z - 1.0,
-            maxZ = restaurant.position.z + 1.0,
-        }, {
-            options = {
-                {
-                    type = "client",
-                    event = "restaurant:openOrderMenu",
-                    icon = 'fas fa-laptop',
-                    label = 'Order Ingredients',
-                    restaurantId = id,  
-                    job = restaurant.job  
+        if Config.Target == 'qb' then
+            exports['qb-target']:AddBoxZone("restaurant_computer_" .. id, restaurant.position, 1.5, 1.5, {
+                name = "restaurant_computer_" .. id,
+                heading = restaurant.heading,
+                debugPoly = false,
+                minZ = restaurant.position.z - 1.0,
+                maxZ = restaurant.position.z + 1.0,
+            }, {
+                options = {
+                    {
+                        type = "client",
+                        event = "restaurant:openOrderMenu",
+                        icon = 'fas fa-laptop',
+                        label = 'Order Ingredients',
+                        restaurantId = id,  
+                        job = restaurant.job  
+                    }
+                },
+                distance = 2.5
+            })
+        elseif Config.Target == 'ox' then
+            exports.ox_target:addBoxZone({
+                coords = restaurant.position,
+                size = vec3(1.5, 1.5, 1.0),
+                rotation = restaurant.heading,
+                debug = false,
+                options = {
+                    {
+                        name = "restaurant_computer_" .. id,
+                        icon = 'fas fa-laptop',
+                        label = 'Order Ingredients',
+                        onSelect = function()
+                            TriggerEvent('restaurant:openOrderMenu', {restaurantId = id})
+                        end,
+                        groups = restaurant.job
+                    }
                 }
-            },
-            distance = 2.5
-        })
+            })
+        end
     end
 end)
 
@@ -186,24 +206,44 @@ end)
 -- Warehouse Job Handling
 Citizen.CreateThread(function()
     for index, warehouse in ipairs(Config.WarehousesLocation) do
-        -- Add a target zone for interaction at each warehouse
-        exports['qb-target']:AddBoxZone("warehouse_processing_" .. tostring(index), warehouse.position, 1.5, 1.5, {
-            name = "warehouse_processing_" .. tostring(index),
-            heading = warehouse.heading,
-            debugPoly = false,
-            minZ = warehouse.position.z - 1.0,
-            maxZ = warehouse.position.z + 1.0,
-        }, {
-            options = {
-                {
-                    type = "client",
-                    event = "warehouse:openProcessingMenu",
-                    icon = 'fas fa-box',
-                    label = 'Process Orders',
+        -- Conditional check for the target system (qb-target or ox_target)
+        if Config.Target == 'qb' then
+            exports['qb-target']:AddBoxZone("warehouse_processing_" .. tostring(index), warehouse.position, 1.5, 1.5, {
+                name = "warehouse_processing_" .. tostring(index),
+                heading = warehouse.heading,
+                debugPoly = false,
+                minZ = warehouse.position.z - 1.0,
+                maxZ = warehouse.position.z + 1.0,
+            }, {
+                options = {
+                    {
+                        type = "client",
+                        event = "warehouse:openProcessingMenu",
+                        icon = 'fas fa-box',
+                        label = 'Process Orders',
+                    }
+                },
+                distance = 2.5
+            })
+        elseif Config.Target == 'ox' then
+            -- Using ox_target
+            exports.ox_target:addBoxZone({
+                coords = warehouse.position,
+                size = vec3(1.0, 0.5, 3.5),
+                rotation = warehouse.heading,
+                debug = false,
+                options = {
+                    {
+                        name = "warehouse_processing_" .. tostring(index),
+                        icon = 'fas fa-box',
+                        label = 'Process Orders',
+                        onSelect = function()
+                            TriggerEvent('warehouse:openProcessingMenu')
+                        end
+                    }
                 }
-            },
-            distance = 2.5
-        })
+            })
+        end
 
         -- Spawn the ped at each warehouse
         local pedModel = GetHashKey(warehouse.pedhash)
@@ -221,10 +261,10 @@ Citizen.CreateThread(function()
 
         -- Add a blip for the warehouse location
         local blip = AddBlipForCoord(warehouse.position.x, warehouse.position.y, warehouse.position.z)
-        SetBlipSprite(blip, 473) -- Choose an appropriate blip sprite (293 is for a warehouse icon)
+        SetBlipSprite(blip, 473) -- Choose an appropriate blip sprite (473 for warehouse icon)
         SetBlipDisplay(blip, 4)
         SetBlipScale(blip, 0.9) -- Adjust size of the blip
-        SetBlipColour(blip, 16) -- Set the color of the blip (2 is green)
+        SetBlipColour(blip, 16) -- Set the color of the blip (16 is light blue)
         SetBlipAsShortRange(blip, true) -- Blip only visible at short range
 
         -- Add a label to the blip
@@ -911,6 +951,7 @@ AddEventHandler('warehouse:deliverBoxes', function(restaurantId, truck, orders, 
         end
 
         palletProp = CreateObject(palletModel, trailerBackPosition.x, trailerBackPosition.y, trailerBackPosition.z, true, true, true)
+        PlaceObjectOnGroundProperly(palletProp)
 
         while true do
             Citizen.Wait(0)
@@ -976,12 +1017,13 @@ AddEventHandler('warehouse:deliverBoxes', function(restaurantId, truck, orders, 
                             Citizen.Wait(0)
                         end
 
-                        local coords = playerCoords
-                        boxProp = CreateObject(model, coords.x, coords.y - 0.5, coords.z, true, true, true)
+                        local coords = GetEntityCoords(playerPed)
+                        boxProp = CreateObject(model, coords.x, coords.y, coords.z, true, true, true)
+
                         -- Attach the box to the player's hand (bone index 60309)
                         AttachEntityToEntity(boxProp, playerPed, GetPedBoneIndex(playerPed, 60309), 
-                            0.025, 0.08, 0.255,  -- Position offsets
-                            -145.0, 290.0, 0.0,  -- Rotation
+                            0.1, 0.2, 0.25,  -- Position offsets
+                            -90.0, 0.0, 0.0,  -- Rotation
                             true, true, false, true, 1, true
                         )
 

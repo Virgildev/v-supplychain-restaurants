@@ -10,13 +10,19 @@ Config = {}
 ░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝░╚════╝░░╚═════╝░╚═════╝░╚══════╝
 */
 
+Config.Core = 'qbox' -- qbcore or qbox
+Config.Target = 'ox' -- qb or ox
+Config.Progress = 'ox' -- its ox get fucked
+Config.Notify = 'ox' -- its ox get fucked
+Config.Menu = 'ox' -- its ox get fucked
+
 -- Restaurant Configuration
 Config.Restaurants = {
     [1] = {
         name = "Tequi-la-la",
-        job = "tequilala",
+        job = "police",
         position = vector3(-575.4901, 289.0903, 77.9936), -- Adjust as needed
-        delivery = vector3(-558.17, 301.81, 82.18),
+        delivery = vector3(-558.17, 301.81, 83.58),
         deliveryFoot = vector3(-561.87, 294.19, 86.49),
         heading = 90.0
     },
@@ -81,7 +87,7 @@ Config.maxBoxes = 3 -- Max amount of boxes the player has to drag inside, you ca
 
 -- Items Configuration for Each Restaurant - ORDERING
 Config.Items = {
-    ["tequilala"] = {
+    ["police"] = {
         ["water"] = {name = "Water", price = 10},
         ["bread"] = {name = "Bread", price = 5},
         ["raw_beef"] = {name = "Raw Beef", price = 15},
@@ -112,7 +118,7 @@ Config.Items = {
 
 Config.DriverPayPrec = 0.1 --precent of the order the driver gets, if you want to redo the way pricing is done go to server/sv_processing about line 220
 
-Config.CarryBoxProp = 'prop_box_03b' -- prop the player carries when carrying boxes inside the resturant for delivery
+Config.CarryBoxProp = 'ng_proc_box_01a' -- prop the player carries when carrying boxes inside the resturant for delivery
 
 
 --[[ 
@@ -125,11 +131,6 @@ Config.CarryBoxProp = 'prop_box_03b' -- prop the player carries when carrying bo
 ]]
 
 -- ANY ITEMS SOLD TO THIS PERSON AUTO GO TO THE WAREHOUSE'S STOCK!!!!!!!!!!!!!!!!!!!!!!
-
--- DONT MIND THESE THREE, DO NOT TOUCH
-Config.Progress = 'ox'
-Config.Notify = 'ox' 
-Config.Menu = 'ox' 
 
 -- Define the ped model
 Config.PedModel = "a_m_m_farmer_01"
@@ -183,4 +184,5 @@ Config.ItemsFarming = {
     ['lemon'] = {label = 'Lemon', price = 4},
     ['mango'] = {label = 'Mango', price = 4},
     ['watermelon'] = {label = 'Watermelon', price = 4},
+    ['water'] = {label = 'Water', price = 4},
 }

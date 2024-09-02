@@ -16,42 +16,81 @@ Citizen.CreateThread(function()
                     local width = 0.5
                     local height = 0.5
 
-                    exports['qb-target']:AddBoxZone("register-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.2), length, width,
-                    {
-                        name = "register-" .. k .. "-" .. a,
-                        heading = d.coords.w,
-                        debugPoly = false,
-                        minZ = d.coords.z - 0.25,
-                        maxZ = d.coords.z + height,
-                    },
-                    {
-                        options = {
-                            {
-                                event = "v-businesses:ChargeCustomer",
-                                icon = "fas fa-credit-card",
-                                label = "Access Register",
-                                job = k,
-                            },
-                            {
-                                event = "v-businesses:ShowMenu",
-                                icon = "fas fa-user-check",
-                                label = "Show Menu",
-                                registerJob = k,
-                            },
-                            {
-                                event = "v-businesses:Pay",
-                                icon = "fas fa-user-check",
-                                label = "Pay",
-                                registerJob = k,
-                            },
+                    if Config.Target == 'qb' then
+                        exports['qb-target']:AddBoxZone("register-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.2), length, width,
+                        {
+                            name = "register-" .. k .. "-" .. a,
+                            heading = d.coords.w,
+                            debugPoly = false,
+                            minZ = d.coords.z - 0.25,
+                            maxZ = d.coords.z + height,
                         },
-                        distance = 2.0
-                    })
+                        {
+                            options = {
+                                {
+                                    event = "v-businesses:ChargeCustomer",
+                                    icon = "fas fa-credit-card",
+                                    label = "Access Register",
+                                    job = k,
+                                },
+                                {
+                                    event = "v-businesses:ShowMenu",
+                                    icon = "fas fa-user-check",
+                                    label = "Show Menu",
+                                    registerJob = k,
+                                },
+                                {
+                                    event = "v-businesses:Pay",
+                                    icon = "fas fa-user-check",
+                                    label = "Pay",
+                                    registerJob = k,
+                                },
+                            },
+                            distance = 2.0
+                        })
+                    elseif Config.Target == 'ox' then
+                        exports.ox_target:addBoxZone({
+                            coords = vector3(d.coords.x, d.coords.y, d.coords.z - 0.2),
+                            size = vec3(length, width, height),
+                            rotation = d.coords.w,
+                            debug = false,
+                            options = {
+                                {
+                                    name = "register-" .. k .. "-" .. a,
+                                    icon = "fas fa-credit-card",
+                                    label = "Access Register",
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:ChargeCustomer", {registerJob = k})
+                                    end,
+                                    job = k,
+                                },
+                                {
+                                    name = "register-" .. k .. "-" .. a,
+                                    icon = "fas fa-user-check",
+                                    label = "Show Menu",
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:ShowMenu", {registerJob = k})
+                                    end,
+                                    job = k,
+                                },
+                                {
+                                    name = "register-" .. k .. "-" .. a,
+                                    icon = "fas fa-user-check",
+                                    label = "Pay",
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:Pay", {registerJob = k})
+                                    end,
+                                    job = k,
+                                }
+                            },
+                            distance = 2.0
+                        })
+                    end
 
                     if d.Prop then
                         local registerProp = CreateObject(GetHashKey("prop_till_01"), d.coords.x, d.coords.y, d.coords.z, false, false, false)
-                        SetEntityHeading(register, d.coords.w)
-                        FreezeEntityPosition(register, true)
+                        SetEntityHeading(registerProp, d.coords.w)
+                        FreezeEntityPosition(registerProp, true)
                     end
                 end
             end
@@ -63,7 +102,9 @@ Citizen.CreateThread(function()
                     local length = 0.5
                     local width = 0.5
                     local height = 0.25
-                    exports['qb-target']:AddBoxZone("tray-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.62), length, width,
+
+                    if Config.Target == 'qb' then
+                        exports['qb-target']:AddBoxZone("tray-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.62), length, width,
                         {
                             name = "tray-" .. k .. "-" .. a,
                             heading = d.coords.w,
@@ -82,14 +123,34 @@ Citizen.CreateThread(function()
                                 },
                             },
                             distance = 2.0
-                        }
-                    )
+                        })
+                    elseif Config.Target == 'ox' then
+                        exports.ox_target:addBoxZone({
+                            coords = vector3(d.coords.x, d.coords.y, d.coords.z - 0.62),
+                            size = vec3(length, width, height),
+                            rotation = d.coords.w,
+                            debug = false,
+                            options = {
+                                {
+                                    name = "tray-" .. k .. "-" .. a,
+                                    icon = "fas fa-basket-shopping",
+                                    label = "Open Tray",
+                                    onSelect = function()
+                                        -- Ensure parameters are passed as an object
+                                        TriggerEvent("v-businesses:OpenTray", { trayId = a, trayJob = k })
+                                    end,
+                                },
+                            },
+                            distance = 2.0
+                        })
+                    end
                 end
             end
         end
 
         if clockin then
-            exports['qb-target']:AddBoxZone("clockin-" .. k, vector3(clockin.coords.x, clockin.coords.y, clockin.coords.z - 0.62), clockin.dimensions.length, clockin.dimensions.width,
+            if Config.Target == 'qb' then
+                exports['qb-target']:AddBoxZone("clockin-" .. k, vector3(clockin.coords.x, clockin.coords.y, clockin.coords.z - 0.62), clockin.dimensions.length, clockin.dimensions.width,
                 {
                     name = "clockin-" .. k,
                     heading = clockin.coords.w,
@@ -107,15 +168,35 @@ Citizen.CreateThread(function()
                         },
                     },
                     distance = 2.0
-                }
-            )
+                })
+            elseif Config.Target == 'ox' then
+                exports.ox_target:addBoxZone({
+                    coords = vector3(clockin.coords.x, clockin.coords.y, clockin.coords.z - 0.62),
+                    size = vec3(clockin.dimensions.length, clockin.dimensions.width, clockin.dimensions.height),
+                    rotation = clockin.coords.w,
+                    debug = false,
+                    options = {
+                        {
+                            name = "clockin-" .. k,
+                            icon = "fas fa-clock",
+                            label = "Clock In/Out",
+                            onSelect = function()
+                                TriggerEvent("v-businesses:ToggleClockIn", k)
+                            end,
+                        },
+                    },
+                    distance = 2.0
+                })
+            end
         end
 
         if storage then
             for a, d in pairs(storage) do
                 if d then
-                    local height = d.height or 1.0 
-                    exports['qb-target']:AddBoxZone("storage-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.62), d.width or 1.5, d.length or 0.6,
+                    local height = d.height or 1.0
+
+                    if Config.Target == 'qb' then
+                        exports['qb-target']:AddBoxZone("storage-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.62), d.width or 1.5, d.length or 0.6,
                         {
                             name = "storage-" .. k .. "-" .. a,
                             heading = d.coords.w,
@@ -135,22 +216,45 @@ Citizen.CreateThread(function()
                                 },
                             },
                             distance = 2.0
-                        }
-                    )
+                        })
+                    elseif Config.Target == 'ox' then
+                        exports.ox_target:addBoxZone({
+                            coords = vector3(d.coords.x, d.coords.y, d.coords.z - 0.62),
+                            size = vec3(d.width or 1.5, d.length or 0.6, height),
+                            rotation = d.coords.w,
+                            debug = false,
+                            options = {
+                                {
+                                    name = "storage-" .. k .. "-" .. a,
+                                    icon = "fas fa-dolly",
+                                    label = d.targetLabel,
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:OpenStorage", { storageJob = k, storageId = a })
+                                    end,
+                                },
+                            },
+                            distance = 2.0
+                        })
+                    end
                 end
             end
-        end        
+        end
 
         if CookLoco then
             for a, d in pairs(CookLoco) do
                 if d then
-                    exports['qb-target']:AddBoxZone("CookLoco-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.52), d.length or 1.5, d.width or 0.6,
+                    local height = d.height or 0.35
+                    local length = d.length or 1.5
+                    local width = d.width or 0.6
+
+                    if Config.Target == 'qb' then
+                        exports['qb-target']:AddBoxZone("CookLoco-" .. k .. "-" .. a, vector3(d.coords.x, d.coords.y, d.coords.z - 0.52), length, width,
                         {
                             name = "CookLoco-" .. k .. "-" .. a,
                             heading = d.coords.w,
                             debugPoly = false,
-                            minZ = d.coords.z - (d.height or 0.35),
-                            maxZ = d.coords.z + (d.height or 0.35),
+                            minZ = d.coords.z - height,
+                            maxZ = d.coords.z + height,
                         },
                         {
                             options = {
@@ -163,8 +267,26 @@ Citizen.CreateThread(function()
                                 },
                             },
                             distance = 2.0
-                        }
-                    )
+                        })
+                    elseif Config.Target == 'ox' then
+                        exports.ox_target:addBoxZone({
+                            coords = vector3(d.coords.x, d.coords.y, d.coords.z - 0.52),
+                            size = vec3(length, width, height),
+                            rotation = d.coords.w,
+                            debug = false,
+                            options = {
+                                {
+                                    name = "CookLoco-" .. k .. "-" .. a,
+                                    icon = "fas fa-utensils",
+                                    label = d.targetLabel,
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:PrepareFood", { job = k, index = a })
+                                    end,
+                                },
+                            },
+                            distance = 2.0
+                        })
+                    end
                 end
             end
         end
@@ -172,13 +294,17 @@ Citizen.CreateThread(function()
         if chairs then
             for a, chair in pairs(chairs) do
                 if chair then
-                    exports['qb-target']:AddBoxZone("chair-" .. k .. "-" .. a, vector3(chair.coords.x, chair.coords.y, chair.coords.z - 0.65), 0.6, 0.6,
+                    local size = 0.6
+                    local height = 0.25
+
+                    if Config.Target == 'qb' then
+                        exports['qb-target']:AddBoxZone("chair-" .. k .. "-" .. a, vector3(chair.coords.x, chair.coords.y, chair.coords.z - 0.65), size, size,
                         {
                             name = "chair-" .. k .. "-" .. a,
                             heading = chair.coords.w,
                             debugPoly = false,
-                            minZ = chair.coords.z - 0.25,
-                            maxZ = chair.coords.z + 0.25,
+                            minZ = chair.coords.z - height,
+                            maxZ = chair.coords.z + height,
                         },
                         {
                             options = {
@@ -192,13 +318,49 @@ Citizen.CreateThread(function()
                                 },
                             },
                             distance = 2.5
-                        }
-                    )
+                        })
+                    elseif Config.Target == 'ox' then
+                        exports.ox_target:addBoxZone({
+                            coords = vector3(chair.coords.x, chair.coords.y, chair.coords.z - 0.65),
+                            size = vec3(size, size, height),
+                            rotation = chair.coords.w,
+                            debug = false,
+                            options = {
+                                {
+                                    name = "chair-" .. k .. "-" .. a,
+                                    icon = "fas fa-couch",
+                                    label = "Sit Chair",
+                                    onSelect = function()
+                                        TriggerEvent("v-businesses:SitChair", {
+                                            coords = chair.coords,
+                                            chairJob = k
+                                        })
+                                    end,
+                                },
+                            },
+                            distance = 2.5
+                        })
+                    end
                 end
             end
         end
     end
 end)
+
+Citizen.CreateThread(function()
+    for businessName, business in pairs(Businesses.Businesses) do
+        if business.blip then
+            local blip = AddBlipForCoord(business.clockin.coords.x, business.clockin.coords.y, business.clockin.coords.z)
+            SetBlipSprite(blip, business.blip.sprite) 
+            SetBlipScale(blip, business.blip.scale) 
+            SetBlipColour(blip, business.blip.color) 
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentSubstringPlayerName(business.jobDisplay)
+            EndTextCommandSetBlipName(blip)
+        end
+    end
+end)
+
 
 RegisterNetEvent('v-businesses:ChargeCustomer', function(info)
     TriggerEvent(Businesses.ResturantBillingEvent)
@@ -208,18 +370,36 @@ RegisterNetEvent('v-businesses:Pay', function(info)
     TriggerEvent(Businesses.CustomerBillingEvent)
 end)
 
-RegisterNetEvent('v-businesses:OpenTray', function(info)
-    local jobName = info.trayJob
-    local trayId = info.trayId
-    local stashName = "order-tray-" .. jobName .. "-" .. trayId
-    exports["ox_inventory"]:openInventory('stash', stashName)
+RegisterNetEvent('v-businesses:OpenTray')
+AddEventHandler('v-businesses:OpenTray', function(info)
+    -- Debugging: Print the type and contents of `info`
+    print("Type of info: ", type(info))
+    print("Contents of info: ", json.encode(info)) -- Requires a JSON library or similar for pretty-printing
+
+    if type(info) == 'table' and info.trayJob and info.trayId then
+        local jobName = info.trayJob
+        local trayId = info.trayId
+        local stashName = "order-tray-" .. jobName .. "-" .. trayId
+        exports["ox_inventory"]:openInventory('stash', stashName)
+    else
+        print("Error: Invalid data received for OpenTray event.")
+    end
 end)
 
-RegisterNetEvent('v-businesses:OpenStorage', function(info)
-    local jobName = info.storageJob
-    local storageId = info.storageId
-    local stashName = "storage-" .. jobName .. "-" .. storageId
-    exports["ox_inventory"]:openInventory('stash', stashName)
+RegisterNetEvent('v-businesses:OpenStorage')
+AddEventHandler('v-businesses:OpenStorage', function(info)
+    -- Print type and contents of `info` to diagnose the issue
+    print("Type of info: ", type(info))
+    print("Contents of info: ", json.encode(info))  -- Use a JSON library or similar for pretty-printing
+
+    if type(info) == 'table' and info.storageJob and info.storageId then
+        local jobName = info.storageJob
+        local storageId = info.storageId
+        local stashName = "storage-" .. jobName .. "-" .. storageId
+        exports["ox_inventory"]:openInventory('stash', stashName)
+    else
+        print("Error: Invalid data received for OpenStorage event.")
+    end
 end)
 
 RegisterNetEvent('v-businesses:ToggleClockIn', function(info)
@@ -242,62 +422,69 @@ RegisterNetEvent('v-businesses:ToggleClockIn', function(info)
     end
 end)
 
-RegisterNetEvent('v-businesses:PrepareFood', function(info)
-    local job = QBCore.Functions.GetPlayerData().job.name
-    local index = info.index
-    local CookLoco = Businesses.Businesses[job].CookLoco[index]
+RegisterNetEvent('v-businesses:PrepareFood')
+AddEventHandler('v-businesses:PrepareFood', function(info)
+    -- Check if `info` is a table and contains the expected fields
+    if type(info) == 'table' and info.job and info.index then
+        local job = info.job
+        local index = info.index
+        local CookLoco = Businesses.Businesses[job].CookLoco[index]
 
-    if not CookLoco then
-        lib.notify({
-            title = 'Invalid Preparation Table',
-            type = 'error'
-        })
-        return
-    end
+        if not CookLoco then
+            lib.notify({
+                title = 'Invalid Preparation Table',
+                type = 'error'
+            })
+            return
+        end
 
-    local options = {}
+        local options = {}
 
-    for _, item in pairs(CookLoco.items) do
-        local hasItems = true
-        local requirements = "Requirements:\n"
+        for _, item in pairs(CookLoco.items) do
+            local hasItems = true
+            local requirements = "Requirements:\n"
 
-        if item.requiredItems then
-            for _, req in pairs(item.requiredItems) do
-                local itemInfo = QBCore.Shared.Items[req.item]
-                local itemDisplayName = itemInfo and itemInfo.label or req.item
-                requirements = requirements .. req.amount .. "x " .. itemDisplayName .. "\n"
-                if exports.ox_inventory:GetItemCount(req.item) < req.amount then
-                    hasItems = false
+            if item.requiredItems then
+                for _, req in pairs(item.requiredItems) do
+                    local itemInfo = QBCore.Shared.Items[req.item]
+                    local itemDisplayName = itemInfo and itemInfo.label or req.item
+                    requirements = requirements .. req.amount .. "x " .. itemDisplayName .. "\n"
+                    if exports.ox_inventory:GetItemCount(req.item) < req.amount then
+                        hasItems = false
+                    end
                 end
+            else
+                requirements = "Requirements: None"
             end
-        else
-            requirements = "Requirements: None"
+
+            local iteminfo = exports.ox_inventory:Items(item.item)
+            local itemName = iteminfo and iteminfo.label or item.item
+            local itemID = iteminfo and iteminfo.name or item.item
+
+            table.insert(options, {
+                title = itemName,
+                description = requirements,
+                image = 'nui://ox_inventory/web/images/' .. itemID .. '.png',
+                disabled = not hasItems,
+                event = "btrp-business:inputAmount",
+                args = { iteminfo = item, index = index }
+            })
         end
 
-        local iteminfo = exports.ox_inventory:Items(item.item)
-        local itemName = iteminfo and iteminfo.label or item.item
-        local itemID = iteminfo and iteminfo.name or item.item
-
-        table.insert(options, {
-            title = itemName,
-            description = requirements,
-            image = 'nui://ox_inventory/web/images/' .. itemID .. '.png',
-            disabled = not hasItems,
-            event = "btrp-business:inputAmount",
-            args = { iteminfo = item, index = index }
+        lib.registerContext({
+            id = 'food_preparation_menu',
+            title = 'Prepare Food',
+            options = options,
+            onExit = function()
+                ClearPedTasks(PlayerPedId())
+            end
         })
+
+        lib.showContext('food_preparation_menu')
+    else
+        print("Error: Invalid data received for PrepareFood event.")
+        print("Received info:", type(info), json.encode(info)) 
     end
-
-    lib.registerContext({
-        id = 'food_preparation_menu',
-        title = 'Prepare Food',
-        options = options,
-        onExit = function()
-            ClearPedTasks(PlayerPedId())
-        end
-    })
-
-    lib.showContext('food_preparation_menu')
 end)
 
 RegisterNetEvent('btrp-business:inputAmount', function(info)
@@ -376,9 +563,26 @@ end)
 
 RegisterNetEvent('v-businesses:SitChair', function(info)
     local ped = PlayerPedId()
-    local coords = vector3(info.coords.x, info.coords.y, info.coords.z)
+    local coords = info.coords
 
-    if #(GetEntityCoords(ped) - coords) > 2.0 then
+    if not coords or not coords.x or not coords.y or not coords.z then
+        lib.notify({
+            title = 'Invalid chair coordinates.',
+            type = 'error'
+        })
+        return
+    end
+
+    -- Determine Z-coordinate adjustment based on the target type
+    local adjustedCoords
+    if Config.Target == 'ox' then
+        adjustedCoords = vector3(coords.x, coords.y, coords.z - 0.5) -- Adjust this offset as needed
+    else
+        adjustedCoords = vector3(coords.x, coords.y, coords.z)
+    end
+
+    -- Check distance to chair
+    if #(GetEntityCoords(ped) - adjustedCoords) > 2.0 then
         lib.notify({
             title = 'You are too far from the chair.',
             type = 'error'
@@ -386,7 +590,8 @@ RegisterNetEvent('v-businesses:SitChair', function(info)
         return
     end
 
-    local playersNearby = QBCore.Functions.GetPlayersFromCoords(coords, 0.5)
+    -- Check for nearby players
+    local playersNearby = QBCore.Functions.GetPlayersFromCoords(adjustedCoords, 0.5)
     local seatTaken = false
     for _, player in ipairs(playersNearby) do
         if player ~= PlayerId() and IsPedSittingInAnyVehicle(GetPlayerPed(player)) then
@@ -403,13 +608,14 @@ RegisterNetEvent('v-businesses:SitChair', function(info)
         return
     end
 
-    local business = info.chairJob or "burgershot"
+    -- Determine chair facing direction
+    local business = info.chairJob
     local chairFacing = 0.0
 
     if Businesses.Businesses[business] and Businesses.Businesses[business].chairs then
         for _, chair in ipairs(Businesses.Businesses[business].chairs) do
             local chairCoords = vector3(chair.coords.x, chair.coords.y, chair.coords.z)
-            local distance = #(coords - chairCoords)
+            local distance = #(adjustedCoords - chairCoords)
 
             if distance < 1.0 then
                 chairFacing = chair.coords.w
@@ -424,11 +630,12 @@ RegisterNetEvent('v-businesses:SitChair', function(info)
         return
     end
 
-    TaskGoStraightToCoord(ped, coords.x, coords.y, coords.z, 1.0, 2000, chairFacing, 0.1)
+    -- Move to the chair and start the sitting animation
+    TaskGoStraightToCoord(ped, adjustedCoords.x, adjustedCoords.y, adjustedCoords.z, 1.0, 2000, chairFacing, 0.1)
 
     Citizen.Wait(1200)
 
-    TaskStartScenarioAtPosition(ped, "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER", coords.x, coords.y, coords.z, chairFacing, 0, true, true)
+    TaskStartScenarioAtPosition(ped, "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER", adjustedCoords.x, adjustedCoords.y, adjustedCoords.z, chairFacing, 0, true, true)
 
     lib.notify({
         title = 'You sat down on the chair.',
@@ -438,6 +645,13 @@ end)
 
 RegisterNetEvent('v-businesses:ShowMenu')
 AddEventHandler('v-businesses:ShowMenu', function(info)
+    -- Handle missing info scenario
+    if not info then
+        print("No info provided")
+        return
+    end
+
+    -- Default values to avoid nil indexing
     local businessName = info.registerJob or info.storageJob or info.trayJob or info.CookLocoJob
     local business = Businesses.Businesses[businessName]
 
@@ -448,16 +662,16 @@ AddEventHandler('v-businesses:ShowMenu', function(info)
 
     local imageUrl = business.menu
 
-    --print("Image URL: " .. imageUrl)
+    -- Debugging info
+    print("Image URL: " .. (imageUrl or "No URL"))
 
-    local alert = lib.alertDialog({
+    lib.alertDialog({
         header = business.jobDisplay .. ' Menu' or "Business Image",
         content = '![Photo ID Image](' .. imageUrl .. ')\n\nUse this image?',
         centered = true,
         cancel = true,
-        size = 'xl',  -- Choose the size that fits best, e.g., 'xs', 'sm', 'md', 'lg', 'xl'
+        size = 'xl',
         labels = {
-            cancel = 'Close',
             confirm = 'OK'
         }
     })
@@ -495,29 +709,49 @@ Citizen.CreateThread(function()
     SetEntityInvincible(ped, true)
     SetModelAsNoLongerNeeded(pedModel)
 
-    exports['qb-target']:AddBoxZone('fruit_sell_ped', Config.Location.coords, 2.0, 2.0, {
-        name = 'fruit_sell_ped',
-        heading = Config.Location.heading,
-        debugPoly = false,
-        minZ = 33.0768,
-        maxZ = 35.0768
-    }, {
-        options = {
-            {
-                type = "client",
-                event = "farming:openFruitMenu",
-                icon = "fas fa-shopping-basket",
-                label = "Sell Items"
+    if Config.Target == 'qb' then
+        exports['qb-target']:AddBoxZone('fruit_sell_ped', Config.Location.coords, 2.0, 2.0, {
+            name = 'fruit_sell_ped',
+            heading = Config.Location.heading,
+            debugPoly = false,
+            minZ = Config.Location.coords.z - 1.0,  -- Adjust Z coordinates as needed
+            maxZ = Config.Location.coords.z + 1.0
+        }, {
+            options = {
+                {
+                    type = "client",
+                    event = "farming:openFruitMenu",
+                    icon = "fas fa-shopping-basket",
+                    label = "Sell Items"
+                },
             },
-        },
-        distance = 2.0
-    })
+            distance = 2.0
+        })
+    elseif Config.Target == 'ox' then
+        exports.ox_target:addBoxZone({
+            coords = Config.Location.coords,
+            size = vec3(2.0, 2.0, 1.0),
+            rotation = Config.Location.heading,
+            debug = false,
+            options = {
+                {
+                    name = 'fruit_sell_ped',
+                    icon = "fas fa-shopping-basket",
+                    label = "Sell Items",
+                    onSelect = function()
+                        TriggerEvent("farming:openFruitMenu")
+                    end
+                },
+            },
+            distance = 2.0
+        })
+    end
 end)
 
 RegisterNetEvent('farming:openFruitMenu')
 AddEventHandler('farming:openFruitMenu', function()
     local fruits = {}
-    
+
     -- Function to filter fruits based on search query
     local function filterFruits(query)
         local filteredFruits = {}
@@ -536,7 +770,7 @@ AddEventHandler('farming:openFruitMenu', function()
         end
         return filteredFruits
     end
-    
+
     -- Function to create the menu with the option to search
     local function createMenu(searchQuery)
         local options = {}
@@ -551,7 +785,7 @@ AddEventHandler('farming:openFruitMenu', function()
                 local input = lib.inputDialog('Search Items', {
                     { type = 'input', label = 'Enter Item name' }
                 })
-                
+
                 -- If input is not canceled, filter and re-open the menu
                 if input and input[1] then
                     createMenu(input[1])
@@ -583,93 +817,51 @@ RegisterNetEvent('farming:selectFruit')
 AddEventHandler('farming:selectFruit', function(data)
     local fruit = data.fruit
 
-    local dialog
-    if Config.Menu == 'qb' then
-        dialog = exports['qb-input']:ShowInput({
-            header = "Sell " .. Config.ItemsFarming[fruit].label,
-            submitText = "Sell",
-            inputs = {
-                {
-                    text = "Amount to sell",
-                    name = "amount",
-                    type = "number",
-                    isRequired = true,
-                }
-            },
-        })
-    elseif Config.Menu == 'ox' then
-        dialog = lib.inputDialog("Sell " .. Config.ItemsFarming[fruit].label, {
-            {
-                type = "number",
-                label = "Amount to sell",
-                default = "1", 
-            }
-        }, { allowCancel = true })
-    end
+    -- Use ox_lib input dialog for both cases
+    local dialog = lib.inputDialog("Sell " .. Config.ItemsFarming[fruit].label, {
+        {
+            type = "number",
+            label = "Amount to sell",
+            default = "1",
+        }
+    }, { allowCancel = true })
 
     if dialog then
-        local amount
-    
-        if Config.Menu == 'qb' then
-            amount = tonumber(dialog.amount)
-        elseif Config.Menu == 'ox' then
-            amount = tonumber(dialog[1])
-        end
+        local amount = tonumber(dialog[1])
 
         if amount and amount >= 1 then
-            if Config.Menu == 'qb' then
-                QBCore.Functions.Progressbar('Selling', 'Selling ' .. fruit, Config.SellProgress, false, true, {
-                    disableMovement = true,
-                    disableCarMovement = true,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {
-                    animDict = Config.SellingAnimDict,
-                    anim = Config.SellingAnimName,
-                    flags = 1,
-                }, {}, {},
-                function()
-                    TriggerServerEvent('farming:sellFruit', fruit, amount)
-                end)
-            elseif Config.Menu == 'ox' then
-                lib.progressCircle({
-                    duration = Config.SellProgress,
-                    label = 'Selling ' .. fruit,
-                    canCancel = false,
-                    position = 'bottom',
-                    disable = {
-                        car = true,
-                        move = true,
-                        combat = true,
-                        sprint = true,
-                    },
-                    anim = {
-                        dict = Config.SellingAnimDict,
-                        clip = Config.SellingAnimName
-                    },
-                })
-                TriggerServerEvent('farming:sellFruit', fruit, amount)
-            end
+            -- Use ox_lib progress circle for the selling animation
+            lib.progressCircle({
+                duration = Config.SellProgress,
+                label = 'Selling ' .. fruit,
+                canCancel = false,
+                position = 'bottom',
+                disable = {
+                    car = true,
+                    move = true,
+                    combat = true,
+                    sprint = true,
+                },
+                anim = {
+                    dict = Config.SellingAnimDict,
+                    clip = Config.SellingAnimName
+                },
+            })
+            TriggerServerEvent('farming:sellFruit', fruit, amount)
         else
-            if Config.Notify == 'qb' then
-                QBCore.Functions.Notify('Invalid amount. Please enter a valid number greater than or equal to 1', 'error')
-            elseif Config.Notify == 'ox' then
-                lib.notify({
-                    title = 'Invalid Amount',
-                    description = 'Please enter a valid number greater than or equal to 1',
-                    type = 'error'
-                })
-            end
-        end
-    else
-        if Config.Notify == 'qb' then
-            QBCore.Functions.Notify('Sale canceled. Please enter a valid amount to sell', 'error')
-        elseif Config.Notify == 'ox' then
+            -- Use ox_lib notification for invalid amount
             lib.notify({
-                title = 'Sale canceled',
-                description = 'Please enter a valid amount to sell',
+                title = 'Invalid Amount',
+                description = 'Please enter a valid number greater than or equal to 1',
                 type = 'error'
             })
         end
+    else
+        -- Use ox_lib notification for sale cancellation
+        lib.notify({
+            title = 'Sale canceled',
+            description = 'Please enter a valid amount to sell',
+            type = 'error'
+        })
     end
 end)

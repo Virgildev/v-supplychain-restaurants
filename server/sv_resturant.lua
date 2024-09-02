@@ -40,19 +40,34 @@ RegisterServerEvent('v-businesses:GiveItem', function(info)
     local quantity = info.quantity or 1
 
     if not iteminfo or not iteminfo.requiredItems then
-        QBCore.Functions.Notify(src, "Invalid item info.", "error")
+        TriggerClientEvent('ox_lib:notify', src, {
+            title = "Invalid item info.",
+            type = "error",
+            duration = 3000,
+            position = "top-right"
+        })
         return
     end
 
     if type(iteminfo.requiredItems) ~= "table" then
-        QBCore.Functions.Notify(src, "Required items info is not a valid table.", "error")
+        TriggerClientEvent('ox_lib:notify', src, {
+            title = "Required items info is not a valid table.",
+            type = "error",
+            duration = 3000,
+            position = "top-right"
+        })
         return
     end
 
     for _, reqItem in pairs(iteminfo.requiredItems) do
         local playerItem = player.Functions.GetItemByName(reqItem.item)
         if not playerItem or playerItem.amount < reqItem.amount * quantity then
-            QBCore.Functions.Notify(src, "Insufficient required items to craft this item.", "error")
+            TriggerClientEvent('ox_lib:notify', src, {
+                title = "Insufficient required items to craft this item.",
+                type = "error",
+                duration = 3000,
+                position = "top-right"
+            })
             return
         end
     end
@@ -62,4 +77,11 @@ RegisterServerEvent('v-businesses:GiveItem', function(info)
     end
 
     player.Functions.AddItem(iteminfo.item, quantity)
+
+    TriggerClientEvent('ox_lib:notify', src, {
+        title = "Item crafted successfully!",
+        type = "success",
+        duration = 3000,
+        position = "top-right"
+    })
 end)

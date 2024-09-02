@@ -16,7 +16,7 @@ Businesses.ResturantBillingEvent = "okokBilling:ToggleCreateInvoice" -- Event fo
 Businesses.CustomerBillingEvent = "okokBilling:ToggleMyInvoices" -- Event for the customer worker to open when they target the register
 
 Businesses.Businesses = {
-    tequilala = {
+    police = {
         jobDisplay = "Tequi-la-la", -- The displayed name of the job
         menu = "https://fredsburger.com/wp-content/uploads/2022/09/New-Menu-DarkNP.jpg",
 
@@ -115,6 +115,12 @@ Businesses.Businesses = {
             { coords = vector4(-561.75, 290.81, 85.38, 174.78) },
             -- Additional chairs can be added here
         },
+
+        blip = {  -- Added blip configuration
+            sprite = 93,   -- Change this to the desired blip sprite
+            scale = 1.0,   -- Adjust the size of the blip
+            color = 4      -- Change this to the desired blip color
+        }
     },
     -- Additional businesses can be added here
 }

@@ -107,7 +107,6 @@ end)
 RegisterNetEvent('update:stock')
 AddEventHandler('update:stock', function(restaurantId)
     local src = source
-    local xPlayer = QBCore.Functions.GetPlayer(src)
 
     if not restaurantId then
         TriggerClientEvent('ox_lib:notify', source, {
@@ -411,6 +410,14 @@ AddEventHandler('warehouse:acceptOrder', function(orderId, restaurantId)
         }, function(stockResults)
             if not stockResults or #stockResults == 0 then
                 print("Error: No stock information found for item:", order.ingredient)
+                TriggerClientEvent('ox_lib:notify', workerId, {
+                    title = 'Insufficient Stock',
+                    description = 'Not enough stock for ' .. order.ingredient .. '.',
+                    type = 'error',
+                    position = 'top-right',
+                    showDuration = true,
+                    duration = 10000
+                })
                 return
             end
 
@@ -524,48 +531,30 @@ AddEventHandler('farming:sellFruit', function(fruit, amount, targetCoords)
                 end
             end)
 
-            local sellMsg = 'Sold ' .. amount .. ' ' .. fruit .. ' for $' .. total
-
-            if Config.Notify == 'qb' then
-                TriggerClientEvent('QBCore:Notify', src, sellMsg, 'success')
-            else
-                local data = {
-                    title = 'Sold ' .. amount .. ' ' .. fruit,
-                    description = 'for $' .. total,
-                    type = 'success',
-                    duration = 9000,
-                    position = 'top-right'
-                }
-                TriggerClientEvent('ox_lib:notify', src, data)
-            end
-        else
-            local errMsg = 'You don\'t have enough ' .. fruit .. 's'
-
-            if Config.Notify == 'qb' then
-                TriggerClientEvent('QBCore:Notify', src, errMsg, 'error')
-            else
-                local data = {
-                    title = errMsg,
-                    type = 'error',
-                    duration = 3000,
-                    position = 'top-right'
-                }
-                TriggerClientEvent('ox_lib:notify', src, data)
-            end
-        end
-    else
-        local errMsg = 'You don\'t have any ' .. fruit .. 's'
-
-        if Config.Notify == 'qb' then
-            TriggerClientEvent('QBCore:Notify', src, errMsg, 'error')
+            local data = {
+                title = 'Sold ' .. amount .. ' ' .. fruit,
+                description = 'for $' .. total,
+                type = 'success',
+                duration = 9000,
+                position = 'top-right'
+            }
+            TriggerClientEvent('ox_lib:notify', src, data)
         else
             local data = {
-                title = errMsg,
+                title = 'You don\'t have enough ' .. fruit .. 's',
                 type = 'error',
                 duration = 3000,
                 position = 'top-right'
             }
             TriggerClientEvent('ox_lib:notify', src, data)
         end
+    else
+        local data = {
+            title = 'You don\'t have any ' .. fruit .. 's',
+            type = 'error',
+            duration = 3000,
+            position = 'top-right'
+        }
+        TriggerClientEvent('ox_lib:notify', src, data)
     end
 end)
