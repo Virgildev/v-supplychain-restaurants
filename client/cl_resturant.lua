@@ -357,10 +357,10 @@ Citizen.CreateThread(function()
             BeginTextCommandSetBlipName("STRING")
             AddTextComponentSubstringPlayerName(business.jobDisplay)
             EndTextCommandSetBlipName(blip)
+            SetBlipAsShortRange(blip, true)
         end
     end
 end)
-
 
 RegisterNetEvent('v-businesses:ChargeCustomer', function(info)
     TriggerEvent(Businesses.ResturantBillingEvent)
