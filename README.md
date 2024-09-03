@@ -45,4 +45,4 @@ For any issues or support, feel free to open an issue on my [GitHub repository](
 | Requirements                | qb/ox                    |
 | Support                           | Depends              |
 
-# NO THIS WILL NOT BE CONVERTED TO ESX, QBOX WILL BE COMING IF THERE IS ENOUGH INTEREST!!
+# NO THIS WILL NOT BE CONVERTED TO ESX, QBOX HAS ARRIVED!!
