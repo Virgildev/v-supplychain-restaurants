@@ -385,16 +385,24 @@ AddEventHandler('restaurant:showStockDetails', function(stock, restaurantId)
         return
     end
 
-    -- Function to filter stock based on search query
+    -- Function to filter stock based on search query and player's inventory
     local function filterStock(query)
         local filteredStock = {}
+        local itemNames = exports.ox_inventory:Items()
+
         for ingredient, quantity in pairs(stock) do
+            -- Check if the ingredient matches the query
             if string.find(string.lower(ingredient), string.lower(query)) then
-                table.insert(filteredStock, {
-                    title = string.format("Ingredient: %s | Quantity: %d", ingredient, quantity)
-                })
+                -- Search player's inventory for the item
+                local itemData = itemNames[ingredient]
+                if itemData then
+                    table.insert(filteredStock, {
+                        title = string.format("Ingredient: %s | Quantity: %d", itemData.label, quantity)
+                    })
+                end
             end
         end
+
         return filteredStock
     end
 
@@ -739,7 +747,7 @@ AddEventHandler('warehouse:loadingWithForklift', function(trailerConfig, deliver
                 -- Forklift return handling
                 local forkliftPos = GetEntityCoords(forklift)
                 local forkliftZoneDist = vectorLength(vectorSubtract(forkliftPos, warehouseConfig.forkliftPosition))
-                if forkliftZoneDist < 7.0 then
+                if forkliftZoneDist < 3.0 then
                     lib.showTextUI('[E] Return Forklift')
                     if IsControlJustReleased(0, 38) then
                         lib.hideTextUI()

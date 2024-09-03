@@ -11,7 +11,7 @@ Config = {}
 */
 
 Config.Core = 'qbox' -- qbcore or qbox
-Config.Inventory = 'ox' -- qb or ox (honestly not a clue if qb inventory works, please reach out if issues)
+Config.Inventory = 'ox' -- ox. maybe qb in the future, will not work now
 Config.Target = 'ox' -- qb or ox
 Config.Progress = 'ox' -- its ox get fucked
 Config.Notify = 'ox' -- its ox get fucked
