@@ -1,5 +1,5 @@
 **Preview:**
-- Check out the scripts in action with my [preview link](https://drive.google.com/file/d/1Oxk_uKFl5PBw1qSVACX0j4R0oOh9hPhi/view?usp=sharing).
+- Check out the scripts in action with my [preview link](https://www.youtube.com/watch?v=q-rLkHe4jzA).
 - MLO USED IN PREVIEW: https://forum.cfx.re/t/release-free-mlo-trucks-job-warehouse/2347310
   
 **Download:**
