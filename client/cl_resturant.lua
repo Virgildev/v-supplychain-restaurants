@@ -62,7 +62,7 @@ Citizen.CreateThread(function()
                                     onSelect = function()
                                         TriggerEvent("v-businesses:ChargeCustomer", {registerJob = k})
                                     end,
-                                    job = k,
+                                    groups = k,
                                 },
                                 {
                                     name = "register-" .. k .. "-" .. a,
@@ -71,7 +71,6 @@ Citizen.CreateThread(function()
                                     onSelect = function()
                                         TriggerEvent("v-businesses:ShowMenu", {registerJob = k})
                                     end,
-                                    job = k,
                                 },
                                 {
                                     name = "register-" .. k .. "-" .. a,
@@ -80,7 +79,6 @@ Citizen.CreateThread(function()
                                     onSelect = function()
                                         TriggerEvent("v-businesses:Pay", {registerJob = k})
                                     end,
-                                    job = k,
                                 }
                             },
                             distance = 2.0
@@ -180,6 +178,7 @@ Citizen.CreateThread(function()
                             name = "clockin-" .. k,
                             icon = "fas fa-clock",
                             label = "Clock In/Out",
+                            groups = k,
                             onSelect = function()
                                 TriggerEvent("v-businesses:ToggleClockIn", k)
                             end,
@@ -228,6 +227,7 @@ Citizen.CreateThread(function()
                                     name = "storage-" .. k .. "-" .. a,
                                     icon = "fas fa-dolly",
                                     label = d.targetLabel,
+                                    groups = k, 
                                     onSelect = function()
                                         TriggerEvent("v-businesses:OpenStorage", { storageJob = k, storageId = a })
                                     end,
@@ -279,6 +279,7 @@ Citizen.CreateThread(function()
                                     name = "CookLoco-" .. k .. "-" .. a,
                                     icon = "fas fa-utensils",
                                     label = d.targetLabel,
+                                    groups = k,
                                     onSelect = function()
                                         TriggerEvent("v-businesses:PrepareFood", { job = k, index = a })
                                     end,
