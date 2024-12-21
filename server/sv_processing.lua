@@ -501,60 +501,62 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-RegisterServerEvent('farming:sellFruit')
-AddEventHandler('farming:sellFruit', function(fruit, amount, targetCoords)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local item = Player.Functions.GetItemByName(fruit)
+if Config.UsingVFishing then
+    RegisterServerEvent('farming:sellFruit')
+    AddEventHandler('farming:sellFruit', function(fruit, amount, targetCoords)
+        local src = source
+        local Player = QBCore.Functions.GetPlayer(src)
+        local item = Player.Functions.GetItemByName(fruit)
 
-    if item then
-        if item.amount >= amount then
-            local price = Config.ItemsFarming[fruit].price
-            local total = amount * price
+        if item then
+            if item.amount >= amount then
+                local price = Config.ItemsFarming[fruit].price
+                local total = amount * price
 
-            Player.Functions.RemoveItem(fruit, amount)
-            Player.Functions.AddMoney('cash', total)
+                Player.Functions.RemoveItem(fruit, amount)
+                Player.Functions.AddMoney('cash', total)
 
-            MySQL.Async.fetchAll('SELECT * FROM warehouse_stock WHERE ingredient = @ingredient', {
-                ['@ingredient'] = fruit
-            }, function(stockResults)
-                if #stockResults > 0 then
-                    MySQL.Async.execute('UPDATE warehouse_stock SET quantity = quantity + @quantity WHERE ingredient = @ingredient', {
-                        ['@quantity'] = amount,
-                        ['@ingredient'] = fruit
-                    })
-                else
-                    MySQL.Async.execute('INSERT INTO warehouse_stock (ingredient, quantity) VALUES (@ingredient, @quantity)', {
-                        ['@ingredient'] = fruit,
-                        ['@quantity'] = amount
-                    })
-                end
-            end)
+                MySQL.Async.fetchAll('SELECT * FROM warehouse_stock WHERE ingredient = @ingredient', {
+                    ['@ingredient'] = fruit
+                }, function(stockResults)
+                    if #stockResults > 0 then
+                        MySQL.Async.execute('UPDATE warehouse_stock SET quantity = quantity + @quantity WHERE ingredient = @ingredient', {
+                            ['@quantity'] = amount,
+                            ['@ingredient'] = fruit
+                        })
+                    else
+                        MySQL.Async.execute('INSERT INTO warehouse_stock (ingredient, quantity) VALUES (@ingredient, @quantity)', {
+                            ['@ingredient'] = fruit,
+                            ['@quantity'] = amount
+                        })
+                    end
+                end)
 
-            local data = {
-                title = 'Sold ' .. amount .. ' ' .. fruit,
-                description = 'for $' .. total,
-                type = 'success',
-                duration = 9000,
-                position = 'top-right'
-            }
-            TriggerClientEvent('ox_lib:notify', src, data)
+                local data = {
+                    title = 'Sold ' .. amount .. ' ' .. fruit,
+                    description = 'for $' .. total,
+                    type = 'success',
+                    duration = 9000,
+                    position = 'top-right'
+                }
+                TriggerClientEvent('ox_lib:notify', src, data)
+            else
+                local data = {
+                    title = 'You don\'t have enough ' .. fruit .. 's',
+                    type = 'error',
+                    duration = 3000,
+                    position = 'top-right'
+                }
+                TriggerClientEvent('ox_lib:notify', src, data)
+            end
         else
             local data = {
-                title = 'You don\'t have enough ' .. fruit .. 's',
+                title = 'You don\'t have any ' .. fruit .. 's',
                 type = 'error',
                 duration = 3000,
                 position = 'top-right'
             }
             TriggerClientEvent('ox_lib:notify', src, data)
         end
-    else
-        local data = {
-            title = 'You don\'t have any ' .. fruit .. 's',
-            type = 'error',
-            duration = 3000,
-            position = 'top-right'
-        }
-        TriggerClientEvent('ox_lib:notify', src, data)
-    end
-end)
+    end)
+end

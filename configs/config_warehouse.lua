@@ -17,6 +17,8 @@ Config.Progress = 'ox' -- its ox get fucked
 Config.Notify = 'ox' -- its ox get fucked
 Config.Menu = 'ox' -- its ox get fucked
 
+Config.UsingVFishing = true -- If you are using v-Farming then keep this true
+
 -- Restaurant Configuration
 Config.Restaurants = {
     [1] = {
