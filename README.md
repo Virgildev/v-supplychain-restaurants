@@ -1,3 +1,9 @@
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
+# ⚠️ **THIS SCRIPT IS NO LONGER MAINTAINED, USE AT YOUR OWN RISK** ⚠️
+
+# ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
 **Preview:**
 - Check out the scripts in action with my [preview link](https://www.youtube.com/watch?v=q-rLkHe4jzA).
 - MLO USED IN PREVIEW: https://forum.cfx.re/t/release-free-mlo-trucks-job-warehouse/2347310
